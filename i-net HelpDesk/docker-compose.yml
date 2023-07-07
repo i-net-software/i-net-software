@@ -1,0 +1,60 @@
+version: '2.2'
+
+services:
+  product:
+    # Using the latest container
+    image: inetsoftware/i-net-helpdesk
+    command:
+      # The following command will make sure, that the database server
+      # is up and running before the actual helpdesk service is run.
+      - sh
+      - wait-for.sh
+      - mysql:3306
+      - --
+      - sh
+      - ./startServer.sh
+      - -Dclearreports.config=User/Default
+      - -Dsetupautoexecution=true
+    container_name: i-net-helpdesk
+    restart: always
+    depends_on:
+      - mysql
+    ports:
+      # There is nothing else on the server, we can use the default webserver ports.
+      - 80:80
+      - 443:443
+    environment:
+      # Enable system authentication, so users can register
+      # IMPORTANT: the first user will gain administrative permissions!
+      CONF_authentication__settings: '[{"provider"\:"system"},{"minimumPasswordLength"\:"8","minimumPasswordStrength"\:"weak","userCanRegister"\:"true","provider"\:"product"}]'
+      # The database settings are tuned to the mysql settings below.
+      CONF_dbsConfigs: '[{"status":"Unknown","dbName":"HDS","url":"jdbc:mysql://mysql:3306/inetHDOfficial?useSSL=false&allowPublicKeyRetrieval=true","user":"root","encodedPassword":"AU1KQVA=","host":"mysql","port":"3306","sid":"","catalog":"inetHDOfficial","driver":"mysql"}]'
+      # prepare default ports
+      CONF_listener__port: "80"
+      CONF_listener__ssl__port: "443"
+      # Enable logging to the docker logs
+      CONF_log__engine: "true"
+      CONF_log__file: /dev/stdout
+      # The backup directory is an extra setting, which is nice, not required.
+      CONF_BackupLocation: /home/helpdesk/backup
+      # Using the FORCE_IMPORT_CONFIG=0 we ensure that an existing configuration will be re-used upon restart
+      # Since we have the persistences mounted into the base system, this makes sense
+      FORCE_IMPORT_CONFIG: "0"
+    volumes:
+      - /srv/i-net-helpdesk/persistence:/home/helpdesk
+      - /etc/localtime:/etc/localtime
+      - /etc/timezone:/etc/timezone
+
+  mysql:
+    image: mysql:8
+    environment:
+      # Prepare database. Since the database is only accessible as sidecar container
+      # we can use simple passwords here. Otherwise the passwords will have to be adjusted
+      # in the CONF_dbsConfig environment variable above
+      MYSQL_DATABASE: inetHDOfficial
+      MYSQL_PASSWORD: inet
+      MYSQL_ROOT_PASSWORD: inet
+      MYSQL_USER: inetHDOfficial
+    restart: always
+    volumes:
+      - /srv/i-net-helpdesk/mysql:/var/lib/mysql
