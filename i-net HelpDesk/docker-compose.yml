@@ -26,7 +26,7 @@ services:
     environment:
       # Enable system authentication, so users can register
       # IMPORTANT: the first user will gain administrative permissions!
-      CONF_authentication__settings: '[{"provider"\:"system"},{"minimumPasswordLength"\:"8","minimumPasswordStrength"\:"weak","userCanRegister"\:"true","provider"\:"product"}]'
+      CONF_authentication__settings: '[{"minimumPasswordLength"\:"8","minimumPasswordStrength"\:"weak","userCanRegister"\:"true","provider"\:"product"}]'
       # The database settings are tuned to the mysql settings below.
       CONF_dbsConfigs: '[{"status":"Unknown","dbName":"HDS","url":"jdbc:mysql://mysql:3306/inetHDOfficial?useSSL=false&allowPublicKeyRetrieval=true","user":"root","encodedPassword":"AU1KQVA=","host":"mysql","port":"3306","sid":"","catalog":"inetHDOfficial","driver":"mysql"}]'
       # prepare default ports
