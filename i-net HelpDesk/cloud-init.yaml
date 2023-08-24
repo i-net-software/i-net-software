@@ -32,6 +32,12 @@ write_files:
       MAX_FULLBKP_AGE=1M
       DUPL_PARAMS="$DUPL_PARAMS --full-if-older-than $MAX_FULLBKP_AGE " 
     path: /root/.duply/backup/conf
+  # duply crontab
+  - content: |
+      # Create a full Backup on first of month
+      0 0 1 * * : Full backup ; /usr/bin/duply /root/.duply/backup full_verify_purge --force
+      1 0 * * * : Daily incremental backup ; /usr/bin/duply /root/.duply/backup backup
+    path: /etc/cron.d/duply
 runcmd:
   # Configure fail2Ban for unwanted logins
   - printf "[sshd]\nenabled = true\nbanaction = iptables-multiport\nport 522" > /etc/fail2ban/jail.local
@@ -63,8 +69,5 @@ runcmd:
   - curl -fsSL "https://github.com/i-net-software/i-net-software/raw/main/i-net%20HelpDesk/docker-compose.yml" -o docker-compose.yml
   - docker compose up -d
   # prepare the backup directory
-  - mkdir -p /srv/backup /root/.duply/backup
   - chmod -R go-rwx /root/.duply
-  # Register the backup to be run daily
-  # - '(crontab -l 2>/dev/null; printf "\n# Create a full Backup on first of month\n0 0 1 * * : Full backup ; /usr/bin/duply /root/.duply/backup full_verify_purge --force\n1 0 * * * : Daily incremental backup ; /usr/bin/duply /root/.duply/backup backup\n\n") | crontab -"'
   - reboot
