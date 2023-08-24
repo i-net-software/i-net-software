@@ -66,5 +66,5 @@ runcmd:
   - mkdir -p /srv/backup /root/.duply/backup
   - chmod -R go-rwx /root/.duply
   # Register the backup to be run daily
-  - (crontab -l 2>/dev/null; printf "\n# Create a full Backup on first of month\n0 0 1 * * : Full backup ; /usr/bin/duply /root/.duply/backup full_verify_purge --force\n1 0 * * * : Daily incremental backup ; /usr/bin/duply /root/.duply/backup backup\n\n") | crontab -
+  - '(crontab -l 2>/dev/null; printf "\n# Create a full Backup on first of month\n0 0 1 * * : Full backup ; /usr/bin/duply /root/.duply/backup full_verify_purge --force\n1 0 * * * : Daily incremental backup ; /usr/bin/duply /root/.duply/backup backup\n\n") | crontab -"'
   - reboot
