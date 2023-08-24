@@ -34,7 +34,7 @@ services:
       CONF_listener__ssl__port: "443"
       # Enable logging to the docker logs
       CONF_log__engine: "true"
-      CONF_log__file: /dev/stdout
+      CONF_log__file: /home/helpdesk/helpdesk.log
       # The backup directory is an extra setting, which is nice, not required.
       CONF_BackupLocation: /home/helpdesk/backup
       # Using the FORCE_IMPORT_CONFIG=0 we ensure that an existing configuration will be re-used upon restart
