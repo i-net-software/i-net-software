@@ -27,6 +27,8 @@ runcmd:
   - sed -i -e '/^\(#\|\)AuthorizedKeysFile/s/^.*$/AuthorizedKeysFile .ssh\/authorized_keys/' /etc/ssh/sshd_config
   # Setup SSH to stop after 2 auth retries
   - sed -i -e '/^\(#\|\)MaxAuthTries/s/^.*$/MaxAuthTries 2/' /etc/ssh/sshd_config
+  # Set timezone
+  - timedatectl set-timezone Europe/Berlin
   # Setup Docker Container ensemble
   - mkdir -p /srv/i-net-helpdesk/persistence /srv/i-net-helpdesk/mysql
   - chown -R 1000:1000 /srv/i-net-helpdesk
