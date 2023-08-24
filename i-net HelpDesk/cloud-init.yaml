@@ -1,0 +1,36 @@
+#cloud-config
+packages:
+  - fail2ban
+  - ufw
+  - nmap
+package_update: true
+package_upgrade: true
+runcmd:
+  # Configure fail2Ban for unwanted logins
+  - printf "[sshd]\nenabled = true\nbanaction = iptables-multiport\nport 522" > /etc/fail2ban/jail.local
+  - systemctl enable fail2ban
+  # Configure ufw to allow ssh only from VPC and HTTP/S from everywhere
+  - ufw allow from 162.55.186.47 to any proto tcp port 522
+  - ufw allow from 78.47.145.249 to any proto tcp port 522
+  - ufw allow http
+  - ufw allow https
+  - ufw enable
+  # Setup SSH to specific Port
+  - sed -i -e '/^\(#\|\)Port/s/^.*$/Port 522/' /etc/ssh/sshd_config
+  # Setup SSH to disable password authentication
+  - sed -i -e '/^\(#\|\)PasswordAuthentication/s/^.*$/PasswordAuthentication no/' /etc/ssh/sshd_config
+  - sed -i -e '/^\(#\|\)PubkeyAuthentication/s/^.*$/PubkeyAuthentication yes/' /etc/ssh/sshd_config
+  # Setup SSH to disable remove certain capabilities
+  - sed -i -e '/^\(#\|\)X11Forwarding/s/^.*$/X11Forwarding no/' /etc/ssh/sshd_config
+  - sed -i -e '/^\(#\|\)AllowTcpForwarding/s/^.*$/AllowTcpForwarding no/' /etc/ssh/sshd_config
+  - sed -i -e '/^\(#\|\)AllowAgentForwarding/s/^.*$/AllowAgentForwarding no/' /etc/ssh/sshd_config
+  - sed -i -e '/^\(#\|\)AuthorizedKeysFile/s/^.*$/AuthorizedKeysFile .ssh\/authorized_keys/' /etc/ssh/sshd_config
+  # Setup SSH to stop after 2 auth retries
+  - sed -i -e '/^\(#\|\)MaxAuthTries/s/^.*$/MaxAuthTries 2/' /etc/ssh/sshd_config
+  # Setup Docker Container ensemble
+  - mkdir -p /srv/i-net-helpdesk/persistence /srv/i-net-helpdesk/mysql
+  - chown -R 1000:1000 /srv/i-net-helpdesk
+  - cd /srv/i-net-helpdesk
+  - curl -fsSL "https://github.com/i-net-software/i-net-software/raw/main/i-net%20HelpDesk/docker-compose.yml" -o docker-compose.yml
+  - docker compose up -d
+  - reboot
