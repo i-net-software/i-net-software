@@ -10,23 +10,23 @@ write_files:
   # Pre-Backup File, export the database
   - content: |
       #!/bin/bash
-      docker exec i-net-helpdesk-mysql-1 mysqldump --hex-blob -pinet inetHDOfficial 2>/dev/null | gzip > /opt/i-net-helpdesk/i-net-helpdesk.sql.$(date '+%F').gz
+      docker exec i-net-helpdesk-mysql-1 mysqldump --hex-blob -pinet inetHDOfficial 2>/dev/null | gzip > /srv/i-net-helpdesk/i-net-helpdesk.sql.$(date '+%F').gz
     path: /root/.duply/backup/pre
   # Post-Backup File, remove the database backup
   - content: |
       #!/bin/bash
-      rm /opt/i-net-helpdesk/i-net-helpdesk.sql.$(date '+%F').gz
+      rm /srv/i-net-helpdesk/i-net-helpdesk.sql.$(date '+%F').gz
     path: /root/.duply/backup/post
   # Configuration, what to include in the backup
   - content: |
-      + /opt/i-net-helpdesk
+      + /srv/i-net-helpdesk
       - **
     path: /root/.duply/backup/exclude
   # Configuration of duply
   - content: |
       GPG_KEY='<TODO>'
       GPG_PW='<TODO>'
-      TARGET='rsync://<WHERE TO>/backup'
+      TARGET='file:///srv/backup'
       SOURCE='/'
       MAX_AGE=2M
       MAX_FULLBKP_AGE=1M
@@ -68,6 +68,9 @@ runcmd:
   - cd /srv/i-net-helpdesk
   - curl -fsSL "https://github.com/i-net-software/i-net-software/raw/main/i-net%20HelpDesk/docker-compose.yml" -o docker-compose.yml
   - docker compose up -d
-  # prepare the backup directory
+  # Prepare the backup directory
   - chmod -R go-rwx /root/.duply
+  # Prepare GPG backup
+  - echo -e "use-agent\npinentry-mode loopback" >> ~/.gnupg/gpg.conf
+  - echo -e "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
   - reboot
