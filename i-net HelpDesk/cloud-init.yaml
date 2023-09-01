@@ -70,7 +70,7 @@ runcmd:
   - docker compose up -d
   # Prepare the backup directory
   - chmod -R go-rwx /root/.duply
-  # Prepare GPG backup
+  # Prepare GPG backup, see https://www.thomas-krenn.com/en/wiki/Backup_on_Linux_with_duply
   - echo -e "use-agent\npinentry-mode loopback" >> ~/.gnupg/gpg.conf
   - echo -e "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
   - reboot
