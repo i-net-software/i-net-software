@@ -85,16 +85,16 @@ runcmd:
   - cd /srv/i-net-helpdesk
   - curl -fsSL "https://github.com/i-net-software/i-net-software/raw/main/i-net%20HelpDesk/docker-compose.yml" -o docker-compose.yml
   - docker compose up -d
-  # Prepare the backup directory
-  - chmod -R go-rwx /root/.duply
-  - mkdir -p /srv/backup
-  - chgrp inetbackup /srv/backup
-  - chmod 750 /srv/backup
   # Prepare backup user
   - addgroup --gid 1001 inetbackup
   - adduser --disabled-password --gecos 'Backup User' --uid 1001 --gid 1001 --shell /usr/sbin/rush inetbackup
   - sudo -u inetbackup mkdir -p /home/inetbackup/.ssh
   - chmod 750 /home/inetbackup/.ssh
+  # Prepare the backup directory
+  - chmod -R go-rwx /root/.duply
+  - mkdir -p /srv/backup
+  - chgrp inetbackup /srv/backup
+  - chmod 750 /srv/backup
   # Prepare SSH system for backup user
   - printf "\n\nMatch User inetbackup\n\tForceCommand /usr/bin/rrsync -ro /srv/backup\n\tX11Forwarding no\n\tAllowTcpForwarding no\n\tAllowAgentForwarding no\n\tPermitTTY no\n" | tee -a /etc/ssh/sshd_config
   # Prepare GPG backup, see https://www.thomas-krenn.com/en/wiki/Backup_on_Linux_with_duply
