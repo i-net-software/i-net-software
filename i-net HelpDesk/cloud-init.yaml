@@ -37,8 +37,8 @@ write_files:
   # duply crontab
   - content: |
       # Create a full Backup on first of month
-      0 0 1 * * : Full backup ; /usr/bin/duply /root/.duply/backup pre_full_verify_purge_post --force
-      1 0 * * * : Daily incremental backup ; /usr/bin/duply /root/.duply/backup backup
+      0 0 1 * * root : Full backup ; /usr/bin/duply /root/.duply/backup pre_full_verify_purge_post --force
+      1 0 * * * root : Daily incremental backup ; /usr/bin/duply /root/.duply/backup backup
     path: /etc/cron.d/duply
   - content: |
       debug 1
