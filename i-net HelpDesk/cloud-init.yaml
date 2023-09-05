@@ -4,6 +4,7 @@ packages:
   - ufw
   - nmap
   - duply
+  - rush
 package_update: true
 package_upgrade: true
 write_files:
@@ -16,6 +17,7 @@ write_files:
   - content: |
       #!/bin/bash
       rm /srv/i-net-helpdesk/i-net-helpdesk.sql.$(date '+%F').gz
+      chown -R inetbackup:backup /srv/backup/*
     path: /root/.duply/backup/post
   # Configuration, what to include in the backup
   - content: |
@@ -35,9 +37,24 @@ write_files:
   # duply crontab
   - content: |
       # Create a full Backup on first of month
-      0 0 1 * * : Full backup ; /usr/bin/duply /root/.duply/backup full_verify_purge --force
+      0 0 1 * * : Full backup ; /usr/bin/duply /root/.duply/backup pre_full_verify_purge_post --force
       1 0 * * * : Daily incremental backup ; /usr/bin/duply /root/.duply/backup backup
     path: /etc/cron.d/duply
+  - content: |
+      debug 1
+      ######################
+      rule default
+        acct on
+        limits t10r20
+        umask 002
+        env - USER LOGNAME HOME PATH SSH_ORIGINAL_COMMAND
+        fall-through
+      ######################
+      rule rsync-backup
+        command ^/usr/bin/rrsync -ro /srv/backup$
+        uid >= 1000
+        umask 002
+    path: /etc/rush.rc
 runcmd:
   # Configure fail2Ban for unwanted logins
   - printf "[sshd]\nenabled = true\nbanaction = iptables-multiport\nport 522" > /etc/fail2ban/jail.local
@@ -70,6 +87,16 @@ runcmd:
   - docker compose up -d
   # Prepare the backup directory
   - chmod -R go-rwx /root/.duply
+  - mkdir -p /srv/backup
+  - chgrp inetbackup /srv/backup
+  - chmod 750 /srv/backup
+  # Prepare backup user
+  - addgroup --gid 1001 inetbackup
+  - adduser --disabled-password --gecos 'Backup User' --uid 1001 --gid 1001 --shell /usr/sbin/rush inetbackup
+  - sudo -u inetbackup mkdir -p /home/inetbackup/.ssh
+  - chmod 750 /home/inetbackup/.ssh
+  # Prepare SSH system for backup user
+  - printf "\n\nMatch User inetbackup\n\tForceCommand /usr/bin/rrsync -ro /srv/backup\n\tX11Forwarding no\n\tAllowTcpForwarding no\n\tAllowAgentForwarding no\n\tPermitTTY no\n" | tee -a /etc/ssh/sshd_config
   # Prepare GPG backup, see https://www.thomas-krenn.com/en/wiki/Backup_on_Linux_with_duply
   - echo -e "use-agent\npinentry-mode loopback" >> ~/.gnupg/gpg.conf
   - echo -e "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
