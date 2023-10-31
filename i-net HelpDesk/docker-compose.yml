@@ -3,7 +3,7 @@ version: '2.2'
 services:
   product:
     # Using the latest container
-    image: inetsoftware/i-net-helpdesk
+    image: inetsoftware/i-net-helpdesk:latest-with-fonts
     command:
       # The following command will make sure, that the database server
       # is up and running before the actual helpdesk service is run.
