@@ -1,0 +1,48 @@
+services:
+  product:
+    image: inetsoftware/i-net-helpdesk:alpine-with-fonts-23
+    extends:
+      file: ./docker-compose.yml
+      service: product
+    depends_on:
+      - mssql
+      - mysql
+    command:
+      # The following command will make sure, that the database server
+      # is up and running before the actual helpdesk service is run.
+      - sh
+      - wait-for.sh
+      - mssql:1433
+      - --
+      - sh
+      - ./startServer.sh
+      - -Dclearreports.config=User/Default
+      - -Dsetupautoexecution=true
+    environment:
+      CONF_dbsConfigs: '[]'
+      DEFAULT_PROPFILE: $DEFAULT_PROPFILE
+  mysql:
+    extends:
+      file: ./docker-compose.yml
+      service: mysql
+  mssql:
+    # see https://hub.docker.com/r/kcollins/mssql
+    image: kcollins/mssql:latest
+    volumes:
+      - mssql-data:/var/opt/mssql
+      - /srv/backup/mssql-backup:/backups
+      - /srv/backup/mssql-init:/docker-entrypoint-initdb.d
+    secrets:
+      - mssql-sa-password
+    environment:
+      # ACCEPT_EULA confirms your acceptance of the End-User Licensing Agreement.
+      ACCEPT_EULA: Y
+      MSSQL_SA_PASSWORD_FILE: /run/secrets/mssql-sa-password
+      MSSQL_PID: Developer  # Change to the edition you need, e.g. "Express", "Standard", etc.
+
+secrets:
+  mssql-sa-password:
+    file: /root/secrets/MSSQL_SA_PASSWORD
+
+volumes:
+  mssql-data:
