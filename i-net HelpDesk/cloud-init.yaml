@@ -42,18 +42,19 @@ write_files:
       1 0 * * * root : Daily incremental backup ; /usr/bin/duply /root/.duply/backup backup
     path: /etc/cron.d/duply
   - content: |
-      debug 1
+      rush 2.0
+      global
+        debug 1
       ######################
       rule default
         acct on
-        limits t10r20
-        umask 002
-        env - USER LOGNAME HOME PATH SSH_ORIGINAL_COMMAND
+        limits T10 R20
+        umask 0021
+        keepenv USER LOGNAME HOME PATH SSH_ORIGINAL_COMMAND
         fall-through
       ######################
       rule rsync-backup
-        command ^/usr/bin/rrsync -ro /srv/backup$
-        uid >= 1000
+        match $uid >= 1000 && $command ~ "^/usr/bin/rrsync -ro /srv/backup$"
         umask 002
     path: /etc/rush.rc
 runcmd:
