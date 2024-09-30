@@ -7,7 +7,7 @@ services:
       - strongswan
     networks:
       vpn_bridge:
-        ipv4_address: ${IP_END_POINT:-172.172.0.1}
+        ipv4_address: ${IP_END_POINT:-172.172.0.2}
 
   mysql:
     extends:

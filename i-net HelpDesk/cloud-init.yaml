@@ -5,6 +5,7 @@ packages:
   - nmap
   - duply
   - rush
+  - ipcalc
 package_update: true
 package_upgrade: true
 write_files:
