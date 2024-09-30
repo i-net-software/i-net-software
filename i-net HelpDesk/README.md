@@ -8,7 +8,7 @@ Here, you can find a `docker-compose.yml` to start the i-net HelpDesk Server wit
 
 The system comes pre-configured with duply. You have to either create a new GPG key or import your existing one to make use of the backup encryption. You can have a look https://www.thomas-krenn.com/en/wiki/Backup_on_Linux_with_duply for additional information.
 
-# Running an ensemble with VPN
+## Running an ensemble with VPN
 
 You have to prepare the Strongswan configuration in `/srv/strongswan`:
 
@@ -26,9 +26,10 @@ cat > /srv/strongswan/ipsec.secret
 
 ```bash
 
-COMPOSE_OPT="-f docker-compose-vpn.yml"
+export COMPOSE_OPT="-f docker-compose-vpn.yml"
 docker compose ${COMPOSE_OPT} build strongswan
-read -p "Enter IP address of internal End-Point: " IP_END_POINT; IP_SUB_NET=$(echo $IP_END_POINT | sed 's/\([0-9]*\.[0-9]*\.[0-9]*\.[0-9]*\).*/\1\/28/'); export IP_END_POINT IP_SUB_NET; docker compose ${COMPOSE_OPT} config;
+read -p "Enter IP address: " IP_END_POINT; IP_SUB_NET=$(ipcalc -n -b $IP_END_POINT 28 | grep Network | awk '{print $2}'); export IP_SUB_NET IP_END_POINT;
 
+docker compose ${COMPOSE_OPT} config
 docker compose ${COMPOSE_OPT} up -d
 ```
