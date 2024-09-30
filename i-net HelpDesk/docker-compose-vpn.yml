@@ -1,0 +1,34 @@
+services:
+  product:
+    extends:
+      file: ./docker-compose.yml
+      service: product
+    depends_on:
+      - strongswan
+    networks:
+      vpn_bridge:
+        ipv4_address: ${IP_END_POINT:-172.172.0.1}
+
+  mysql:
+    extends:
+      file: ./docker-compose.yml
+      service: mysql
+
+  strongswan:
+    image: i-net-software/strongswan
+    build: ./strongswan
+    volumes:
+      - /srv/strongswan:/etc/strongswan
+#      - /srv/strongswan/ipsec.conf:/etc/strongswan/ipsec.conf
+#      - /srv/strongswan/ipsec.secrets:/etc/strongswan/ipsec.secrets
+#      - /srv/strongswan/strongswan.conf:/etc/strongswan/strongswan.conf
+    restart: always
+    networks:
+      vpn_bridge:
+
+networks:
+  vpn_bridge:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: ${IP_SUB_NET:-172.172.0.0/24}
