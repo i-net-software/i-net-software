@@ -40,9 +40,8 @@ services:
       FORCE_IMPORT_CONFIG: "0"
     volumes:
       - /srv/i-net-helpdesk/persistence:/home/helpdesk
-      - /etc/localtime:/etc/localtime
-      - /etc/timezone:/etc/timezone
-
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
   mysql:
     image: mysql:8
     environment:
