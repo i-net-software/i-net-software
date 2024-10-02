@@ -18,10 +18,9 @@ services:
     image: i-net-software/strongswan
     build: ./strongswan
     volumes:
-      - /srv/strongswan:/etc/strongswan
-#      - /srv/strongswan/ipsec.conf:/etc/strongswan/ipsec.conf
-#      - /srv/strongswan/ipsec.secrets:/etc/strongswan/ipsec.secrets
-#      - /srv/strongswan/strongswan.conf:/etc/strongswan/strongswan.conf
+      - /srv/strongswan/ipsec.conf:/etc/ipsec.conf:ro
+      - /srv/strongswan/ipsec.secrets:/etc/ipsec.secrets:ro
+      - /srv/strongswan/strongswan.conf:/etc/strongswan.conf:ro
     restart: always
     networks:
       vpn_bridge:
