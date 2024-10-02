@@ -28,7 +28,7 @@ cat > /srv/strongswan/ipsec.secret
 
 export COMPOSE_OPT="-f docker-compose-vpn.yml"
 docker compose ${COMPOSE_OPT} build strongswan
-read -p "Enter IP address: " IP_END_POINT; IP_SUB_NET=$(ipcalc -n -b $IP_END_POINT 28 | grep Network | awk '{print $2}'); printf "IP_SUB_NET=${IP_SUB_NET}\nIP_END_POINT=${IP_END_POINT}";
+read -p "Enter IP address: " IP_END_POINT; IP_SUB_NET=$(ipcalc -n -b $IP_END_POINT 28 | grep Network | awk '{print $2}'); printf "IP_SUB_NET=${IP_SUB_NET}\nIP_END_POINT=${IP_END_POINT}\n";
 
 docker compose ${COMPOSE_OPT} config
 docker compose ${COMPOSE_OPT} up -d
