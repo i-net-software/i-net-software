@@ -22,6 +22,8 @@ services:
       - /srv/strongswan/ipsec.secrets:/etc/ipsec.secrets:ro
       - /srv/strongswan/strongswan.conf:/etc/strongswan.conf:ro
     restart: always
+    cap_add:
+      - NET_ADMIN
     networks:
       vpn_bridge:
 
