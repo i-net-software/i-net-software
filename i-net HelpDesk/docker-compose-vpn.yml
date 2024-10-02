@@ -5,6 +5,7 @@ services:
       service: product
     depends_on:
       - strongswan
+      - mysql
     networks:
       vpn_bridge:
         ipv4_address: ${IP_END_POINT:-172.172.0.2}
@@ -13,6 +14,8 @@ services:
     extends:
       file: ./docker-compose.yml
       service: mysql
+    networks:
+      vpn_bridge:
 
   strongswan:
     image: i-net-software/strongswan
@@ -24,8 +27,11 @@ services:
     restart: always
     cap_add:
       - NET_ADMIN
-    networks:
-      vpn_bridge:
+    network_mode: "host"
+    # The Docker Host requires additional NAT rules in the iptables
+    # iptables -I POSTROUTING 1 ! -s ${IP_SUB_NET:-172.172.0.0/24} -d ${DESTINATION_SUB_NET} -j SNAT --to-source ${IP_END_POINT_GATEWAY:-172.172.0.1} -t nat
+    # iptables -I POSTROUTING 1 -s ${IP_SUB_NET:-172.172.0.0/24} -d ${DESTINATION_SUB_NET} -m policy --dir out --pol ipsec -j ACCEPT -t nat
+    # iptables -I POSTROUTING 1 -m policy --dir out --pol ipsec -j ACCEPT -t nat
 
 networks:
   vpn_bridge:
