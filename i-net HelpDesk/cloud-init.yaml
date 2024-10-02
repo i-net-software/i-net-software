@@ -22,8 +22,9 @@ write_files:
     path: /root/.duply/backup/post
   # Configuration, what to include in the backup
   - content: |
-      + /srv/i-net-helpdesk
       - /srv/i-net-helpdesk/mysql
+      - /srv/i-net-helpdesk/persistence/.*
+      + /srv/i-net-helpdesk
       - **
     path: /root/.duply/backup/exclude
   # Configuration of duply
