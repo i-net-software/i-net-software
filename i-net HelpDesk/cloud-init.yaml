@@ -34,9 +34,9 @@ write_files:
       TARGET='file:///srv/backup'
       SOURCE='/'
       MAX_AGE=10D
-      MAX_FULLBKP_AGE=2W
-      MAX_FULL_BACKUPS=1
-      MAX_FULLS_WITH_INCR=1
+      MAX_FULLBKP_AGE=1W
+      MAX_FULL_BACKUPS=2
+      MAX_FULLS_WITH_INCR=2
       DUPL_PARAMS="$DUPL_PARAMS --full-if-older-than $MAX_FULLBKP_AGE"
     path: /root/.duply/backup/conf
   # duply crontab
