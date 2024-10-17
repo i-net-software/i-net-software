@@ -33,15 +33,18 @@ write_files:
       GPG_PW='<TODO>'
       TARGET='file:///srv/backup'
       SOURCE='/'
-      MAX_AGE=2M
-      MAX_FULLBKP_AGE=1M
-      DUPL_PARAMS="$DUPL_PARAMS --full-if-older-than $MAX_FULLBKP_AGE " 
+      MAX_AGE=10D
+      MAX_FULLBKP_AGE=2W
+      MAX_FULL_BACKUPS=1
+      MAX_FULLS_WITH_INCR=1
+      DUPL_PARAMS="$DUPL_PARAMS --full-if-older-than $MAX_FULLBKP_AGE"
     path: /root/.duply/backup/conf
   # duply crontab
   - content: |
       # Create a full Backup on first of month
       0 0 1 * * root : Full backup ; /usr/bin/duply /root/.duply/backup pre_full_verify_purge_post --force
       1 0 * * * root : Daily incremental backup ; /usr/bin/duply /root/.duply/backup backup
+      0 2 * * 0 root : Purge old backups every week ; /usr/bin/duply /root/.duply/backup purgeAuto --force
     path: /etc/cron.d/duply
   - content: |
       rush 2.0
