@@ -1,6 +1,6 @@
 services:
   product:
-    image: inetsoftware/i-net-helpdesk:alpine-with-fonts-23
+    image: inetsoftware/i-net-helpdesk:latest-with-fonts
     extends:
       file: ./docker-compose.yml
       service: product
