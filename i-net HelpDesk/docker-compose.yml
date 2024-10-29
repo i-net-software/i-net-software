@@ -7,7 +7,7 @@ services:
       # is up and running before the actual helpdesk service is run.
       - sh
       - wait-for.sh
-      - mysql:3306
+      - mariadb:3306
       - --
       - sh
       - ./startServer.sh
@@ -16,7 +16,7 @@ services:
     container_name: i-net-helpdesk
     restart: always
     depends_on:
-      - mysql
+      - mariadb
     ports:
       # There is nothing else on the server, we can use the default webserver ports.
       - 80:80
@@ -25,8 +25,8 @@ services:
       # Enable system authentication, so users can register
       # IMPORTANT: the first user will gain administrative permissions!
       CONF_authentication__settings: '[{"minimumPasswordLength"\:"8","minimumPasswordStrength"\:"weak","userCanRegister"\:"true","provider"\:"product"}]'
-      # The database settings are tuned to the mysql settings below.
-      CONF_dbsConfigs: '[{"status":"Unknown","dbName":"HDS","url":"jdbc:mysql://mysql:3306/inetHDOfficial?useSSL=false&allowPublicKeyRetrieval=true","user":"root","encodedPassword":"AU1KQVA=","host":"mysql","port":"3306","sid":"","catalog":"inetHDOfficial","driver":"mysql"}]'
+      # The database settings are tuned to the mariadb settings below.
+      CONF_dbsConfigs: '[{"status":"Unknown","dbName":"HDS","url":"jdbc:mariadb://mariadb:3306/inetHDOfficial?useSSL=false&allowPublicKeyRetrieval=true","user":"root","encodedPassword":"AU1KQVA=","host":"mariadb","port":"3306","sid":"","catalog":"inetHDOfficial","driver":"mariadb"}]'
       # prepare default ports
       CONF_listener__port: "80"
       CONF_listener__ssl__port: "443"
@@ -42,16 +42,16 @@ services:
       - /srv/i-net-helpdesk/persistence:/home/helpdesk
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
-  mysql:
-    image: mysql:8
+  mariadb:
+    image: mariadb:8
     environment:
       # Prepare database. Since the database is only accessible as sidecar container
       # we can use simple passwords here. Otherwise the passwords will have to be adjusted
       # in the CONF_dbsConfig environment variable above
-      MYSQL_DATABASE: inetHDOfficial
-      MYSQL_PASSWORD: inet
-      MYSQL_ROOT_PASSWORD: inet
-      MYSQL_USER: inetHDOfficial
+      MARIADB_DATABASE: inetHDOfficial
+      MARIADB_PASSWORD: inet
+      MARIADB_ROOT_PASSWORD: inet
+      MARIADB_USER: inetHDOfficial
     restart: always
     volumes:
-      - /srv/i-net-helpdesk/mysql:/var/lib/mysql
+      - /srv/i-net-helpdesk/mariadb:/var/lib/mariadb

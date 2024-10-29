@@ -12,7 +12,7 @@ write_files:
   # Pre-Backup File, export the database
   - content: |
       #!/bin/bash
-      docker exec i-net-helpdesk-mysql-1 mysqldump --hex-blob -pinet inetHDOfficial 2>/dev/null | gzip > /srv/i-net-helpdesk/i-net-helpdesk.sql.$(date '+%F').gz
+      docker exec i-net-helpdesk-mariadb-1 mariadbdump --hex-blob -pinet inetHDOfficial 2>/dev/null | gzip > /srv/i-net-helpdesk/i-net-helpdesk.sql.$(date '+%F').gz
     path: /root/.duply/backup/pre
   # Post-Backup File, remove the database backup
   - content: |
@@ -22,7 +22,7 @@ write_files:
     path: /root/.duply/backup/post
   # Configuration, what to include in the backup
   - content: |
-      - /srv/i-net-helpdesk/mysql
+      - /srv/i-net-helpdesk/mariadb
       - /srv/i-net-helpdesk/persistence/.*
       + /srv/i-net-helpdesk
       - **
@@ -87,7 +87,7 @@ runcmd:
   # Set timezone
   - timedatectl set-timezone Europe/Berlin
   # Setup Docker Container ensemble
-  - mkdir -p /srv/i-net-helpdesk/persistence /srv/i-net-helpdesk/mysql
+  - mkdir -p /srv/i-net-helpdesk/persistence /srv/i-net-helpdesk/mariadb
   - chown -R 1000:1000 /srv/i-net-helpdesk
   - cd /srv/i-net-helpdesk
   - curl -fsSL "https://github.com/i-net-software/i-net-software/raw/main/i-net%20HelpDesk/docker-compose.yml" -o docker-compose.yml

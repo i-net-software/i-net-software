@@ -5,15 +5,15 @@ services:
       service: product
     depends_on:
       - strongswan
-      - mysql
+      - mariadb
     networks:
       vpn_bridge:
         ipv4_address: ${IP_END_POINT:-172.172.0.2}
 
-  mysql:
+  mariadb:
     extends:
       file: ./docker-compose.yml
-      service: mysql
+      service: mariadb
     networks:
       vpn_bridge:
 

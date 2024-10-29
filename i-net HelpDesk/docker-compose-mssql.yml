@@ -6,7 +6,7 @@ services:
       service: product
     depends_on:
       - mssql
-      - mysql
+      - mariadb
     command:
       # The following command will make sure, that the database server
       # is up and running before the actual helpdesk service is run.
@@ -21,10 +21,10 @@ services:
     environment:
       CONF_dbsConfigs: '[]'
       DEFAULT_PROPFILE: $DEFAULT_PROPFILE
-  mysql:
+  mariadb:
     extends:
       file: ./docker-compose.yml
-      service: mysql
+      service: mariadb
   mssql:
     # see https://hub.docker.com/r/kcollins/mssql
     image: kcollins/mssql:latest
