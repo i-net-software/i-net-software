@@ -43,7 +43,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
   mariadb:
-    image: mariadb:8
+    image: mariadb
     environment:
       # Prepare database. Since the database is only accessible as sidecar container
       # we can use simple passwords here. Otherwise the passwords will have to be adjusted
