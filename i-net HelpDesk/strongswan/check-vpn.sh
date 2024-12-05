@@ -17,8 +17,6 @@ if [ -z "${IP_ADDRESSES}" ]; then
 fi
 
 FAIL_COUNT_THRESHOLD=3
-# CHECK_INTERVAL=10  # seconds between checks
-
 HELPDESK_CONTAINER_NAME="i-net-helpdesk"
 STRONGSWAN_CONTAINER_NAME="i-net-helpdesk-strongswan-1"
 
@@ -27,7 +25,7 @@ LOG_FILE="/var/log/vpn_check.log"
 # Check connectivity to each IP
 fail_count=0
 for ip in "${IP_ADDRESSES[@]}"; do
-    if ! ping -c 1 -W 1 "$ip" > /dev/null 2>&1; then
+    if ! docker exec "${HELPDESK_CONTAINER_NAME}" ping -c 1 -W 1 "$ip" > /dev/null 2>&1; then
         fail_count=$((fail_count + 1))
     fi
 done
