@@ -12,7 +12,7 @@ write_files:
   # Pre-Backup File, export the database
   - content: |
       #!/bin/bash
-      docker exec i-net-helpdesk-mariadb-1 mariadbdump --hex-blob -pinet inetHDOfficial 2>/dev/null | gzip > /srv/i-net-helpdesk/i-net-helpdesk.sql.$(date '+%F').gz
+      docker exec i-net-helpdesk-mariadb-1 mariadb-dump --hex-blob -pinet inetHDOfficial 2>/dev/null | gzip > /srv/i-net-helpdesk/i-net-helpdesk.sql.$(date '+%F').gz
     path: /root/.duply/backup/pre
   # Post-Backup File, remove the database backup
   - content: |
