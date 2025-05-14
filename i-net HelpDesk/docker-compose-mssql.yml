@@ -28,6 +28,8 @@ services:
   mssql:
     # see https://hub.docker.com/r/kcollins/mssql
     image: kcollins/mssql:latest
+    # due to an error in the container, the root user must be used, this should be no issue, since this is temporary
+    user: "0"
     volumes:
       - mssql-data:/var/opt/mssql
       - /srv/backup/mssql-backup:/backups
