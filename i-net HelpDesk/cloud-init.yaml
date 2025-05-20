@@ -24,6 +24,7 @@ write_files:
   - content: |
       - /srv/i-net-helpdesk/mariadb
       - /srv/i-net-helpdesk/persistence/.*
+      - /srv/i-net-helpdesk/persistence/publicBackup
       + /srv/i-net-helpdesk
       - **
     path: /root/.duply/backup/exclude
