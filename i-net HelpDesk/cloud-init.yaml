@@ -87,6 +87,7 @@ runcmd:
   - sed -i -e '/^\(#\|\)MaxAuthTries/s/^.*$/MaxAuthTries 2/' /etc/ssh/sshd_config
   # Set timezone
   - timedatectl set-timezone Europe/Berlin
+  - echo "Europe/Berlin" | sudo tee /etc/timezone
   # Setup Docker Container ensemble
   - mkdir -p /srv/i-net-helpdesk/persistence /srv/i-net-helpdesk/mariadb
   - chown -R 1000:1000 /srv/i-net-helpdesk
