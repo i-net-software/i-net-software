@@ -38,7 +38,7 @@ write_files:
       MAX_FULLBKP_AGE=1W
       MAX_FULL_BACKUPS=2
       MAX_FULLS_WITH_INCR=2
-      DUPL_PARAMS="$DUPL_PARAMS --full-if-older-than $MAX_FULLBKP_AGE"
+      DUPL_PARAMS="$DUPL_PARAMS --full-if-older-than $MAX_FULLBKP_AGE "
     path: /root/.duply/backup/conf
   # duply crontab
   - content: |
