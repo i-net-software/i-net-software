@@ -19,6 +19,7 @@ write_files:
       #!/bin/bash
       rm /srv/i-net-helpdesk/i-net-helpdesk.sql.$(date '+%F').gz
       chown -R inetbackup:backup /srv/backup/*
+      ps xo pid,command | grep exitcode | grep -v grep | awk '{print $1}' | xargs -r kill -USR2
     path: /root/.duply/backup/post
   # Configuration, what to include in the backup
   - content: |
